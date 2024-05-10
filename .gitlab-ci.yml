@@ -61,18 +61,6 @@ build:
   script:
     - go mod tidy
     - make build
-    - |
-      if [[ "$CI_COMMIT_REF_NAME" == "main" ]]; then
-        export RELEASE_TAG="cfctl-${CI_COMMIT_SHORT_SHA}"
-      elif [[ "$CI_COMMIT_REF_NAME" == "dev" ]]; then
-        export RELEASE_TAG="cfctl-beta-${CI_COMMIT_SHORT_SHA}"
-      fi
-    - echo "Release tag set to $RELEASE_TAG"
-    - >
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RELEASE" --upload-file ./cfctl "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/generic/$RELEASE_TAG/${CI_COMMIT_SHORT_SHA}/binary"
-  only:
-    - main
-    - dev
   cache:
     policy: pull-push
 
