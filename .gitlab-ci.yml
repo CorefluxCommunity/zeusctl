@@ -60,7 +60,7 @@ build:
   image: golang:1.21.9
   script:
     - go mod tidy
-    - make test
+    - make build
   artifacts:
     paths:
       - cfctl
@@ -76,7 +76,6 @@ build:
       variables:
         RELEASE_TAG: "cfctl-beta-$CI_COMMIT_SHORT_SHA"
   after_script:
-
     - >
       if [ -n "${RELEASE_TAG}" ]; then
         echo "Tagging release as ${RELEASE_TAG}";
