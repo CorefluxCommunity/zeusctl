@@ -3,6 +3,7 @@ package contexts
 import (
   "fmt"
 	"os"
+  "encoding/base64"
 
 	"github.com/hashicorp/vault/api"
 	"github.com/spf13/cobra"
@@ -67,15 +68,21 @@ func loadContext(cmd *cobra.Command, args []string) {
           continue
         }
 
-        value, ok := secret.Data["data"].(map[string]interface{})[secretInfo.Key]
+        // Decode the base64 value
+        base64Value, ok := secret.Data["data"].(map[string]interface{})[secretInfo.Key].(string)
         if !ok {
-          fmt.Printf("Secret key %s not found at path: %s\n", secretInfo.Key, secretInfo.Path)
+          fmt.Printf("Secret key %s not found at path: %s or not a string\n", secretInfo.Key, secretInfo.Path)
           continue
         }
         
+        decodedBytes, err := base64.StdEncoding.DecodeString(base64Value)
+        if err != nil {
+          fmt.Printf("Error decoding base64 value for %s: %s\n", envName, err)
+          continue
+        }
+
         // Output export command instead of setting directly
-        fmt.Printf("export %s='%v'\n", envName, value)
-      }
+        fmt.Printf("export %s='%s'\n", envName, string(decodedBytes))}
       
       break
     }
