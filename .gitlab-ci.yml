@@ -60,28 +60,7 @@ build:
   image: golang:1.21.9
   script:
     - go mod tidy
-    - make test
-  artifacts:
-    paths:
-      - cfctl
-    expire_in: 1 week
+    - make build
   cache:
     policy: pull-push
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      variables:
-        RELEASE_TAG: "cfctl-$CI_COMMIT_SHORT_SHA"
-
-    - if: '$CI_COMMIT_BRANCH == "dev"'
-      variables:
-        RELEASE_TAG: "cfctl-beta-$CI_COMMIT_SHORT_SHA"
-  after_script:
-
-    - >
-      if [ -n "${RELEASE_TAG}" ]; then
-        echo "Tagging release as ${RELEASE_TAG}";
-        git tag ${RELEASE_TAG};
-        git push origin ${RELEASE_TAG};
-        curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" --data '{"name": "'${RELEASE_TAG}'", "tag_name": "'${RELEASE_TAG}'", "description": "Automated release of ${RELEASE_TAG}", "assets": {"links": [{"name": "cfctl Binary", "url": "https://gitlab.com/$CI_PROJECT_PATH/-/jobs/artifacts/$CI_COMMIT_REF_NAME/download?job=build"}]}}' --request POST "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
-      fi
 
