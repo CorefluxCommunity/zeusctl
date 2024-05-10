@@ -68,7 +68,8 @@ build:
         export RELEASE_TAG="cfctl-beta-${CI_COMMIT_SHORT_SHA}"
       fi
     - echo "Release tag set to $RELEASE_TAG"
-    - curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RELEASE" --upload-file ./cfctl "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/generic/$RELEASE_TAG/${CI_COMMIT_SHORT_SHA}/binary"
+    - >
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RELEASE" --upload-file ./cfctl "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/packages/generic/$RELEASE_TAG/${CI_COMMIT_SHORT_SHA}/binary"
   only:
     - main
     - dev
