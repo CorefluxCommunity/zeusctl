@@ -1,0 +1,87 @@
+variables:
+  GOPRIVATE: "gitlab.com/coreflux-cloud/*"
+
+before_script:
+  - git config --global url."git@gitlab.com:".insteadOf "https://gitlab.com/"
+  - apt-get update -y && apt-get install -y openssh-client
+  - eval $(ssh-agent -s)  # Start the ssh-agent
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -  # Add the SSH key
+  - mkdir -p ~/.ssh
+  - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+  - chmod -R 700 ~/.ssh
+  - chmod 600 ~/.ssh/known_hosts
+  - ssh -vT git@gitlab.com
+  - go env
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - go.mod
+    - go.sum
+    - .cache/go-build
+    - $GOPATH/pkg/mod
+    - cache/
+
+include:
+    - template: Security/SAST.gitlab-ci.yml
+
+stages:
+    - lint
+    - test
+    - build
+
+lint:
+  stage: lint
+  image: golang:1.21.9
+  script:
+    - go mod tidy
+    - make fmt
+    - make lint
+  cache:
+    policy: pull-push
+
+test:     
+  stage: test
+  image: golang:1.21.9
+  script:
+    - go mod tidy
+    - make test
+  cache:
+    policy: pull-push
+
+sast:
+  stage: test
+  before_script: []
+  script:
+    - /analyzer run
+
+build:
+  stage: build
+  image: golang:1.21.9
+  script:
+    - go mod tidy
+    - make test
+  artifacts:
+    paths:
+      - cfctl
+    expire_in: 1 week
+  cache:
+    policy: pull-push
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      variables:
+        RELEASE_TAG: "cfctl-$CI_COMMIT_SHORT_SHA"
+
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      variables:
+        RELEASE_TAG: "cfctl-beta-$CI_COMMIT_SHORT_SHA"
+  after_script:
+
+    - >
+      if [ -n "${RELEASE_TAG}" ]; then
+        echo "Tagging release as ${RELEASE_TAG}";
+        git tag ${RELEASE_TAG};
+        git push origin ${RELEASE_TAG};
+        curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" --data '{"name": "'${RELEASE_TAG}'", "tag_name": "'${RELEASE_TAG}'", "description": "Automated release of ${RELEASE_TAG}", "assets": {"links": [{"name": "cfctl Binary", "url": "https://gitlab.com/$CI_PROJECT_PATH/-/jobs/artifacts/$CI_COMMIT_REF_NAME/download?job=build"}]}}' --request POST "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
+      fi
+
