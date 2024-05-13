@@ -63,6 +63,7 @@ func loadContext(cmd *cobra.Command, args []string) {
 				if err != nil {
 					fmt.Printf("Error reading secret from %s: %s\n", secretInfo.Path, err)
 					continue
+
 				}
 
 				if secret == nil || secret.Data == nil {
@@ -70,21 +71,31 @@ func loadContext(cmd *cobra.Command, args []string) {
 					continue
 				}
 
-				// Decode the base64 value
-				base64Value, ok := secret.Data["data"].(map[string]interface{})[secretInfo.Key].(string)
+				value, ok := secret.Data["data"].(map[string]interface{})[secretInfo.Key]
 				if !ok {
-					fmt.Printf("Secret key %s not found at path: %s or not a string\n", secretInfo.Key, secretInfo.Path)
+
+					fmt.Printf("Secret key %s not found at path: %s\n", secretInfo.Key, secretInfo.Path)
+
 					continue
 				}
 
-				decodedBytes, err := base64.StdEncoding.DecodeString(base64Value)
-				if err != nil {
-					fmt.Printf("Error decoding base64 value for %s: %s\n", envName, err)
-					continue
+				var finalValue string
+				if secretInfo.DecodeBase64 {
+					decodedBytes, decodeErr := base64.StdEncoding.DecodeString(fmt.Sprintf("%v", value))
+					if decodeErr != nil {
+						fmt.Printf("Error decoding base64 value for %s: %s\n", envName, decodeErr)
+						continue
+					}
+					finalValue = string(decodedBytes)
+				} else {
+					finalValue = fmt.Sprintf("%v", value)
+				}
+				if secretInfo.EncodeBase64 {
+					finalValue = base64.StdEncoding.EncodeToString([]byte(finalValue))
 				}
 
 				// Output export command instead of setting directly
-				fmt.Printf("export %s='%s'\n", envName, string(decodedBytes))
+				fmt.Printf("export %s='%s'\n", envName, finalValue)
 			}
 
 			break
