@@ -47,8 +47,6 @@ func LoadConfig() (*VaultConfig, error) {
     
   configFile := filepath.Join(homeDir, ".cfctl", "vault.json")
 
-	configFile := filepath.Join(homeDir, ".cfctl", "vault.json")
-
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		return nil, err
