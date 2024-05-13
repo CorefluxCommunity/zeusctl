@@ -7,8 +7,10 @@ import (
 )
 
 type SecretInfo struct {
-	Path string `json:"path"`
-	Key  string `json:"key"`
+	Path         string `json:"path"`
+	Key          string `json:"key"`
+	DecodeBase64 bool   `json:"decodeBase64"`
+	EncodeBase64 bool   `json:"encodeBase64"`
 }
 
 type Context struct {
