@@ -1,62 +1,61 @@
 package config
 
 import (
-  "os"
-  "path/filepath"
-  "encoding/json"
+	"encoding/json"
+	"os"
+	"path/filepath"
 )
 
 type VaultConfig struct {
-  Token string `json:"token"`
-  Host string `json:"host"`
-  CAPath string `json:"caPath"`
+	Token  string `json:"token"`
+	Host   string `json:"host"`
+	CAPath string `json:"caPath"`
 }
 
 func SaveConfig(token, host, caPath string) error {
-  homeDir, err := os.UserHomeDir()
-  if err != nil {
-    return err
-  }
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
 
-  configFile := filepath.Join(homeDir, ".cfctl", "contexts.json")
+	configFile := filepath.Join(homeDir, ".cfctl", "vault.json")
 
-  err = os.MkdirAll(filepath.Dir(configFile), 0700)
-  if err != nil {
-    return err
-  }
+	err = os.MkdirAll(filepath.Dir(configFile), 0700)
+	if err != nil {
+		return err
+	}
 
-  config := VaultConfig{
-    Token: token,
-    Host: host,
-    CAPath: caPath,
-  }
-    
-  data, err := json.Marshal(config)
-  if err != nil {
-    return err
-  }
+	config := VaultConfig{
+		Token:  token,
+		Host:   host,
+		CAPath: caPath,
+	}
 
-  return os.WriteFile(configFile, data, 0600)
+	data, err := json.Marshal(config)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(configFile, data, 0600)
 }
 
 func LoadConfig() (*VaultConfig, error) {
-  homeDir, err := os.UserHomeDir()
-  if err != nil {
-    return nil, err
-  }
-    
-  configFile := filepath.Join(homeDir, ".cfctl", "contexts.json")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
 
-  data, err := os.ReadFile(configFile)
-  if err != nil {
-    return nil, err
-  }
+	configFile := filepath.Join(homeDir, ".cfctl", "vault.json")
 
-  var config VaultConfig
-  if err = json.Unmarshal(data, &config); err != nil {
-    return nil, err
-  }
+	data, err := os.ReadFile(configFile)
+	if err != nil {
+		return nil, err
+	}
 
-  return &config, nil
+	var config VaultConfig
+	if err = json.Unmarshal(data, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }
-

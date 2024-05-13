@@ -1,47 +1,47 @@
 package contexts
 
 import (
-  "encoding/json"
-  "os"
-  "path/filepath"
+	"encoding/json"
+	"os"
+	"path/filepath"
 )
 
 type SecretInfo struct {
-  Path string `json:"path"`
-  Key string `json:"key"`
+	Path string `json:"path"`
+	Key  string `json:"key"`
 }
 
 type Context struct {
-  Name string `json:"name"`
-  Secrets map[string]SecretInfo `json:"secrets"`
+	Name    string                `json:"name"`
+	Secrets map[string]SecretInfo `json:"secrets"`
 }
 
 type Config struct {
-  Contexts []Context `json:"contexts"`
+	Contexts []Context `json:"contexts"`
 }
 
-func LoadContexts() (*Config, error) {
-  homeDir, err := os.UserHomeDir()
-  if err != nil {
-    return nil, err
-  }
+func LoadContexts(path string) (*Config, error) {
+	if path == "" {
+		// If no path provided, use the default location
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return nil, err
+		}
+		path = filepath.Join(homeDir, ".cfctl", "contexts.json")
+	}
 
-  // Construct the path to the config file in the .cfctl directory
-  configFile := filepath.Join(homeDir, ".cfctl", "contexts.json")
-  
-  file, err := os.Open(configFile)
-  if err != nil {
-    return nil, err
-  }
-  defer file.Close()
-  
-  var config Config
-  // Decode the JSON config file
-  decoder := json.NewDecoder(file)
-  if err := decoder.Decode(&config); err != nil {
-    return nil, err
-  }
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
 
-  return &config, nil
+	var config Config
+
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }
-

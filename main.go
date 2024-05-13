@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-  "gitlab.com/coreflux-cloud/cfctl.git/cmd"
+	"gitlab.com/coreflux-cloud/cfctl.git/cmd"
 )
 
 func main() {
@@ -16,4 +16,3 @@ func main() {
 
 	rootCmd.Execute()
 }
-
