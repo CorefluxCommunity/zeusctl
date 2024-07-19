@@ -4,7 +4,7 @@ go 1.21.9
 
 require (
 	github.com/hashicorp/vault/api v1.13.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 )
 
 require (
