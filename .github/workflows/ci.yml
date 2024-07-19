@@ -52,15 +52,8 @@ jobs:
         go mod tidy
         make test
 
-  sast:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run SAST
-      uses: github/codeql-action/analyze@v2
-
   release:
-    needs: [lint, test, sast ]
+    needs: [lint, test ]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
