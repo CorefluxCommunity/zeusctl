@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/vault/api"
 	"github.com/spf13/cobra"
 
-	"gitlab.com/coreflux-cloud/cfctl.git/config"
+	"github.com/CorefluxCommunity/zeusctl/config"
 )
 
 var configFilePath string

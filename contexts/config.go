@@ -29,7 +29,7 @@ func LoadContexts(path string) (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
-		path = filepath.Join(homeDir, ".cfctl", "contexts.json")
+		path = filepath.Join(homeDir, ".zeusctl", "contexts.json")
 	}
 
 	file, err := os.Open(path)

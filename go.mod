@@ -1,4 +1,4 @@
-module gitlab.com/coreflux-cloud/cfctl.git
+module github.com/CorefluxCommunity/zeusctl
 
 go 1.21.9
 

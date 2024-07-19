@@ -18,7 +18,7 @@ func SaveConfig(token, host, caPath string) error {
 		return err
 	}
 
-	configFile := filepath.Join(homeDir, ".cfctl", "vault.json")
+	configFile := filepath.Join(homeDir, ".zeusctl", "vault.json")
 
 	err = os.MkdirAll(filepath.Dir(configFile), 0700)
 	if err != nil {
@@ -45,7 +45,7 @@ func LoadConfig() (*VaultConfig, error) {
 		return nil, err
 	}
 
-	configFile := filepath.Join(homeDir, ".cfctl", "vault.json")
+	configFile := filepath.Join(homeDir, ".zeusctl", "vault.json")
 
 	data, err := os.ReadFile(configFile)
 	if err != nil {

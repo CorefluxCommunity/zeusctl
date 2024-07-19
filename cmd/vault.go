@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"gitlab.com/coreflux-cloud/cfctl.git/auth"
-	"gitlab.com/coreflux-cloud/cfctl.git/contexts"
+	"github.com/CorefluxCommunity/zeusctl/auth"
+	"github.com/CorefluxCommunity/zeusctl/contexts"
 )
 
 func InitVaultCommands(rootCmd *cobra.Command) {
