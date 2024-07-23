@@ -1,6 +1,6 @@
 module github.com/CorefluxCommunity/zeusctl
 
-go 1.22
+go 1.21.9
 
 require (
 	github.com/ebfe/scard v0.0.0-20230420082256-7db3f9b7c8a7
