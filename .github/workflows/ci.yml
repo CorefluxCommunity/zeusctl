@@ -107,7 +107,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./bin/zeusctl-linux-amd64
-        asset_name: zeusctl-linux-amd64
+        asset_name: zeusctl-${{ github.ref }}-linux-amd64
         asset_content_type: application/octet-stream
     - name: Upload Darwin AMD64 Asset
       uses: actions/upload-release-asset@v1
@@ -116,7 +116,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./bin/zeusctl-darwin-amd64
-        asset_name: zeusctl-darwin-amd64
+        asset_name: zeusctl-${{ github.ref }}-darwin-amd64
         asset_content_type: application/octet-stream
     - name: Upload Darwin ARM64 Asset
       uses: actions/upload-release-asset@v1
@@ -124,6 +124,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./bin/zeusctl-darwin-arm64
+        asset_path: ./bin/zeusctl-${{ github.ref }}-darwin-arm64
         asset_name: zeusctl-darwin-arm64
         asset_content_type: application/octet-stream
